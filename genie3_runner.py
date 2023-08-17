@@ -3,10 +3,15 @@ import pandas as pd
 import numpy as np
 
 data = loadtxt('gene_express.txt',skiprows=1)
-idx = np.argwhere(np.all(data[...,:] == 0,axis=0))
+#idx = np.argwhere(np.all(data[...,:] == 0,axis=0))
+#删除全程不表达的基因
+#data = np.delete(data,idx,axis=1)
 
-data = np.delete(data,idx,axis=1)
-idx = idx.squeeze(-1)
+#删除方差为0的基因ps:方差为0其实包含全程不表达
+data_vars = np.var(data, axis=0)
+zero_vars = np.argwhere(data_vars==0)
+data = np.delete(data,zero_vars,axis=1)
+idx = list(zero_vars.squeeze(-1))
 print (idx)
 print (data)
 f = open('gene_express.txt')
